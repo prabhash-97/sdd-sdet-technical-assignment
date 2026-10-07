@@ -1,11 +1,76 @@
+# Maven
 target/
+
+# Java
+*.class
+
+# IntelliJ
 .idea/
 *.iml
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# macOS
 .DS_Store
 
-reports/
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Cucumber
+cucumber-report/
+cucumber-reports/
+
+# Allure
+allure-results/
+allure-report/
+
+# Test artifacts
 screenshots/
+videos/
+traces/
+downloads/
+reports/
 
+# Appium / Android
+*.apk
+*.aab
+*.ipa
+*.app
+.gradle/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Logs
 *.log
+logs/
 
+# Environment / secrets
 .env
+.env.*
+!.env.example
+
+# Certificates / keys
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
+# Temporary
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
