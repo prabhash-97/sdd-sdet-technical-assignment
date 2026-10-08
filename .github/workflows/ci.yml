@@ -64,7 +64,7 @@ jobs:
 
       - name: Run API automation tests
         working-directory: mobile-api-automation
-        run: mvn clean test"
+        run: mvn clean test
 
       - name: Upload API test reports
         if: always()
