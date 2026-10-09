@@ -3,22 +3,17 @@ package com.sdd.automation.pages.web;
 import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Page;
 
-public class WidgetFactoryPage {
-
-    private final Page page;
-
-    private static final String WIDGET_FACTORY_URL =
-            "https://jqueryui.com/widget/";
+public class WidgetFactoryPage extends BasePage{
 
     private final FrameLocator demoFrame;
 
     public WidgetFactoryPage(Page page) {
-        this.page = page;
+        super(page);
         this.demoFrame = page.frameLocator(".demo-frame");
     }
 
     public void navigate() {
-        page.navigate(WIDGET_FACTORY_URL);
+        navigateTo("/widget/");
     }
 
     public void clickGoGreen() {

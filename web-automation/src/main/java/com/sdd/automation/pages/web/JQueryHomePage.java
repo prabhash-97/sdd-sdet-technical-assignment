@@ -2,18 +2,14 @@ package com.sdd.automation.pages.web;
 
 import com.microsoft.playwright.Page;
 
-public class JQueryHomePage {
-
-    private final Page page;
-
-    private static final String URL = "https://jqueryui.com/";
+public class JQueryHomePage extends BasePage {
 
     public JQueryHomePage(Page page) {
-        this.page = page;
+        super(page);
     }
 
     public void navigate() {
-        page.navigate(URL);
+        navigateTo("/");
     }
 
     public String getTitle() {

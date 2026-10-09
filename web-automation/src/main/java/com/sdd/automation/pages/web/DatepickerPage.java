@@ -5,22 +5,17 @@ import com.microsoft.playwright.Page;
 
 import java.time.LocalDate;
 
-public class DatepickerPage {
-
-    private final Page page;
-
-    private static final String DATEPICKER_URL =
-            "https://jqueryui.com/datepicker/";
+public class DatepickerPage extends BasePage {
 
     private final FrameLocator demoFrame;
 
     public DatepickerPage(Page page) {
-        this.page = page;
+        super(page);
         this.demoFrame = page.frameLocator(".demo-frame");
     }
 
     public void navigate() {
-        page.navigate(DATEPICKER_URL);
+        navigateTo("/datepicker/");
     }
 
     public void selectCurrentDate() {

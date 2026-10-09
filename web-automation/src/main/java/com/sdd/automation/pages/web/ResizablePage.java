@@ -3,22 +3,17 @@ package com.sdd.automation.pages.web;
 import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Page;
 
-public class ResizablePage {
-
-    private final Page page;
-
-    private static final String RESIZABLE_URL =
-            "https://jqueryui.com/resizable/";
+public class ResizablePage extends BasePage{
 
     private final FrameLocator demoFrame;
 
     public ResizablePage(Page page) {
-        this.page = page;
+        super(page);
         this.demoFrame = page.frameLocator(".demo-frame");
     }
 
     public void navigate() {
-        page.navigate(RESIZABLE_URL);
+        navigateTo("/resizable/");
     }
 
     public int getWidth() {

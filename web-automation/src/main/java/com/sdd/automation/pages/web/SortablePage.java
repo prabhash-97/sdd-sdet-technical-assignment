@@ -4,22 +4,17 @@ import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
-public class SortablePage {
-
-    private final Page page;
-
-    private static final String SORTABLE_URL =
-            "https://jqueryui.com/sortable/";
+public class SortablePage extends BasePage{
 
     private final FrameLocator demoFrame;
 
     public SortablePage(Page page) {
-        this.page = page;
+        super(page);
         this.demoFrame = page.frameLocator(".demo-frame");
     }
 
     public void navigate() {
-        page.navigate(SORTABLE_URL);
+        navigateTo("/sortable/");
     }
 
     public String getFirstItem() {

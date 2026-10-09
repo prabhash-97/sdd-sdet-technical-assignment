@@ -3,22 +3,17 @@ package com.sdd.automation.pages.web;
 import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Page;
 
-public class SelectablePage {
-
-    private final Page page;
-
-    private static final String SELECTABLE_URL =
-            "https://jqueryui.com/selectable/";
+public class SelectablePage extends BasePage{
 
     private final FrameLocator demoFrame;
 
     public SelectablePage(Page page) {
-        this.page = page;
+        super(page);
         this.demoFrame = page.frameLocator(".demo-frame");
     }
 
     public void navigate() {
-        page.navigate(SELECTABLE_URL);
+        navigateTo("/selectable/");
     }
 
     public void selectItems() {
