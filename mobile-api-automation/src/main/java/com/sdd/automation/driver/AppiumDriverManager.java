@@ -25,7 +25,7 @@ public final class AppiumDriverManager {
             options.setAutomationName(ConfigManager.get("automation.name"));
             options.setDeviceName(ConfigManager.get("device.name"));
 
-            options.setApp(ConfigManager.get("app.path"));
+            //options.setApp(ConfigManager.get("app.path"));
 
             options.setAppPackage(ConfigManager.get("app.package"));
             options.setAppActivity(ConfigManager.get("app.activity"));

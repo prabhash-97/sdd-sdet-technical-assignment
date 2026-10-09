@@ -1,9 +1,7 @@
+
 package com.sdd.automation.tests.mobile;
 
 import com.sdd.automation.driver.AppiumDriverManager;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import io.appium.java_client.AppiumDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -12,35 +10,19 @@ import java.util.Map;
 
 public class AppiumSmokeTest extends BaseMobileTest {
 
-   /*  @Test
+    @Test
     public void verifyApplicationLaunches() {
+        AppiumDriver driver = AppiumDriverManager.getDriver();
 
-        String currentPackage = (String) AppiumDriverManager.getDriver()
-                .executeScript("mobile: getCurrentPackage");
+        driver.executeScript(
+                "mobile: activateApp",
+                Map.of("appId", "io.selendroid.testapp")
+        );
 
         Assert.assertEquals(
-                currentPackage,
+                driver.getCapabilities().getCapability("appium:appPackage"),
                 "io.selendroid.testapp",
-                "Selendroid application was not launched"
+                "Unexpected configured application package"
         );
-    }*/
-   @Test
-public void verifyApplicationLaunches() {
-
-    AppiumDriverManager.getDriver()
-            .executeScript(
-                    "mobile: activateApp",
-                    Map.of("appId", "io.selendroid.testapp")
-            );
-
-    String currentPackage = (String) AppiumDriverManager.getDriver()
-            .executeScript("mobile: getCurrentPackage");
-
-    Assert.assertEquals(
-            currentPackage,
-            "io.selendroid.testapp",
-            "Selendroid application was not launched"
-    );
-}
-  
+    }
 }
