@@ -78,6 +78,7 @@ jobs:
           appium driver install uiautomator2
           appium driver list --installed
 
+      
       - name: Start Android emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -87,32 +88,54 @@ jobs:
           profile: pixel_2
           disable-animations: true
           script: |
+            set -eu
+
+            echo "=== Android devices ==="
             adb devices
             adb wait-for-device
 
-            appium --address 127.0.0.1 --port 4723 > /tmp/appium.log 2>&1 &
+            echo "=== Start Appium server ==="
+            appium --address 127.0.0.1 --port 4723 \
+              > /tmp/appium.log 2>&1 &
+            APPIUM_PID=$!
 
-            for i in $(seq 1 30); do
-              if curl --silent --fail http://127.0.0.1:4723/status > /dev/null; then
-                echo "Appium server is ready"
+            echo "=== Wait for Appium ==="
+            APPIUM_READY=0
+            for i in $(seq 1 60); do
+              if ! kill -0 "$APPIUM_PID" 2>/dev/null; then
+                echo "Appium process exited unexpectedly"
+                cat /tmp/appium.log
+                exit 1
+              fi
+
+              if curl --silent --fail \
+                http://127.0.0.1:4723/status > /tmp/appium-status.json; then
+                APPIUM_READY=1
                 break
               fi
+
               sleep 2
             done
 
-            if ! curl --silent --fail http://127.0.0.1:4723/status; then
-              echo "Appium failed to start"
+            if [ "$APPIUM_READY" -ne 1 ]; then
+              echo "Appium did not become ready"
               cat /tmp/appium.log
               exit 1
             fi
 
-            mvn -B clean test
+            echo "=== Appium status ==="
+            cat /tmp/appium-status.json
 
+            echo "=== Run tests ==="
+            mvn -B clean test
+ 
       - name: Show Appium logs on failure
         if: failure()
         run: |
           if [ -f /tmp/appium.log ]; then
             cat /tmp/appium.log
+          else
+            echo "Appium log file was not created."
           fi
 
       - name: Upload API and mobile test reports
