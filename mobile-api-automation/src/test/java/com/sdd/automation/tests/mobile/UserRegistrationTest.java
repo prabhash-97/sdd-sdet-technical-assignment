@@ -7,10 +7,7 @@ import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.annotations.Listeners;
-import com.sdd.automation.listeners.AllureTestListener;
 
-@Listeners(AllureTestListener.class)
 public class UserRegistrationTest extends BaseMobileTest {
 
     @Test

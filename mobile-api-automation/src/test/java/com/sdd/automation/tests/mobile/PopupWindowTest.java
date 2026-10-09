@@ -2,7 +2,6 @@ package com.sdd.automation.tests.mobile;
 
 import com.sdd.automation.driver.AppiumDriverManager;
 import io.appium.java_client.AppiumDriver;
-import io.qameta.allure.Allure;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.interactions.PointerInput;
@@ -14,10 +13,7 @@ import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.util.Collections;
-import org.testng.annotations.Listeners;
-import com.sdd.automation.listeners.AllureTestListener;
 
-@Listeners(AllureTestListener.class)
 public class PopupWindowTest extends BaseMobileTest {
 
     @Test
@@ -98,5 +94,4 @@ public class PopupWindowTest extends BaseMobileTest {
                 "Home screen title should be visible after dismissing popup."
         );
     }
-    
 }
