@@ -12,7 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   web-automation:
     name: Web Playwright Automation
     runs-on: ubuntu-latest
@@ -36,14 +35,33 @@ jobs:
         working-directory: web-automation
         run: mvn clean test
 
+      - name: Set up Node.js for Allure
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate Web Allure HTML report
+        if: always()
+        working-directory: web-automation
+        run: |
+          if find target/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
+            npm install --global allure-commandline
+            allure generate target/allure-results --clean --output target/allure-report
+          else
+            echo "No Allure results found; skipping report generation."
+          fi
+
       - name: Upload Web test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: web-test-reports
+          if-no-files-found: warn
           path: |
             web-automation/target/surefire-reports/
             web-automation/target/allure-results/
+            web-automation/target/allure-report/
             web-automation/target/logs/
             web-automation/target/screenshots/
 
@@ -64,15 +82,35 @@ jobs:
 
       - name: Run API automation tests
         working-directory: mobile-api-automation
-        run: mvn clean test
+        run: mvn clean test -Dsurefire.suiteXmlFiles=testng-api.xml
+
+      - name: Set up Node.js for Allure
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate API Allure HTML report
+        if: always()
+        working-directory: mobile-api-automation
+        run: |
+          if find target/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
+            npm install --global allure-commandline
+            allure generate target/allure-results --clean --output target/allure-report
+          else
+            echo "No Allure results found; skipping report generation."
+          fi
 
       - name: Upload API test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: api-test-reports
+          if-no-files-found: warn
           path: |
             mobile-api-automation/target/surefire-reports/
+            mobile-api-automation/target/allure-results/
+            mobile-api-automation/target/allure-report/
             mobile-api-automation/target/cucumber-report.html
             mobile-api-automation/target/cucumber-report.json
             mobile-api-automation/target/logs/

@@ -32,8 +32,6 @@ public class ToastMessageTest extends BaseMobileTest {
             driver, Duration.ofSeconds(10)
         );
 
-        // Android toast messages are usually exposed briefly through
-        // the accessibility hierarchy using this text attribute.
         WebElement toast = wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(

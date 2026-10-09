@@ -31,7 +31,6 @@ public class ProgressBarTest extends BaseMobileTest {
             driver, Duration.ofSeconds(30)
         );
 
-        // Wait for the registration screen to appear after loading.
         By registrationHeading =
             By.xpath("//*[@text='Welcome to register a new User']");
 
@@ -41,7 +40,6 @@ public class ProgressBarTest extends BaseMobileTest {
             )
         );
 
-        // Verify important registration form elements.
         Assert.assertTrue(
             driver.findElement(
                 By.id("io.selendroid.testapp:id/inputUsername")

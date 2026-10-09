@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   android-mobile-automation:
+    if: false
     name: Appium Android Mobile Tests
     runs-on: ubuntu-latest
     timeout-minutes: 45

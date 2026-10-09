@@ -3,8 +3,6 @@ package com.sdd.automation.tests.mobile;
 import com.sdd.automation.driver.AppiumDriverManager;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
-//import org.openqa.selenium.NoSuchElementException;
-//import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
@@ -38,14 +36,12 @@ public class BaseMobileTest {
     private void handleAndroidStartupDialogs(AppiumDriver driver) {
         WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
 
-        // Android 10 legacy-app permission review screen
         clickIfPresent(
             driver,
             shortWait,
             By.id("com.android.permissioncontroller:id/continue_button")
         );
 
-        // Handle an optional follow-up confirmation
         clickIfPresent(
             driver,
             shortWait,
@@ -61,7 +57,6 @@ public class BaseMobileTest {
             wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
         } catch (org.openqa.selenium.TimeoutException
                 | org.openqa.selenium.NoSuchElementException ignored) {
-            // This dialog is optional; continue if it isn't displayed.
         }
     }
         @AfterMethod(alwaysRun = true)

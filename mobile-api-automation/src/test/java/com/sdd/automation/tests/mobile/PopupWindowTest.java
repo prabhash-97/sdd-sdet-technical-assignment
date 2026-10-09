@@ -24,7 +24,6 @@ public class PopupWindowTest extends BaseMobileTest {
         WebDriverWait wait =
                 new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        // Step 1: Open the popup
         By popupButton =
                 By.id("io.selendroid.testapp:id/showPopupWindowButton");
 
@@ -32,7 +31,6 @@ public class PopupWindowTest extends BaseMobileTest {
                 ExpectedConditions.elementToBeClickable(popupButton)
         ).click();
 
-        // Step 2: Allow the popup to appear
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -40,7 +38,6 @@ public class PopupWindowTest extends BaseMobileTest {
             throw new RuntimeException(e);
         }
 
-        // Step 3: Check whether Appium can locate Dismiss
         By dismissButton = By.xpath(
                 "//*[@text='Dismiss' or @content-desc='Dismiss']"
         );
@@ -51,7 +48,6 @@ public class PopupWindowTest extends BaseMobileTest {
         if (dismissFound) {
             driver.findElement(dismissButton).click();
         } else {
-            // Fallback: tap the approximate centre of the screen
             PointerInput finger =
                     new PointerInput(PointerInput.Kind.TOUCH, "finger");
 
@@ -81,7 +77,6 @@ public class PopupWindowTest extends BaseMobileTest {
             driver.perform(Collections.singletonList(tap));
         }
 
-        // Step 4: Verify the home screen title
         By homeTitle = By.id("android:id/title");
 
         Assert.assertTrue(
