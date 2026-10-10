@@ -46,6 +46,7 @@ jobs:
             -no-boot-anim
             -camera-back none
             -camera-front none
+          
           script: |
             set -eu
 
@@ -54,51 +55,44 @@ jobs:
             adb wait-for-device
 
             echo "=== Wait for Android boot ==="
-            i=1
-            while [ "$i" -le 60 ]; do
-              BOOT_STATUS=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            adb -s emulator-5554 wait-for-device
+
+            BOOTED=false
+            for i in $(seq 1 90); do
+              BOOT_STATUS=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
               if [ "$BOOT_STATUS" = "1" ]; then
-                echo "Android emulator booted."
+                BOOTED=true
                 break
               fi
-              if [ "$i" -eq 60 ]; then
-                echo "Android emulator failed to boot."
-                exit 1
-              fi
               sleep 2
-              i=$((i + 1))
             done
+
+            if [ "$BOOTED" != "true" ]; then
+              echo "Android emulator did not boot."
+              exit 1
+            fi
 
             echo "=== Start Appium ==="
             appium --address 127.0.0.1 --port 4723 > "$GITHUB_WORKSPACE/appium.log" 2>&1 &
-            APPIUM_PID=$!
-            echo "$APPIUM_PID" > "$GITHUB_WORKSPACE/appium.pid"
+            echo $! > "$GITHUB_WORKSPACE/appium.pid"
 
-            echo "=== Wait for Appium readiness ==="
-            i=1
-            while [ "$i" -le 30 ]; do
+            echo "=== Wait for Appium ==="
+            APPIUM_READY=false
+            for i in $(seq 1 30); do
               if curl --silent --fail http://127.0.0.1:4723/status > /tmp/appium-status.json; then
-                echo "Appium is ready."
+                APPIUM_READY=true
                 break
               fi
-
-              if ! kill -0 "$APPIUM_PID" 2>/dev/null; then
-                echo "Appium stopped unexpectedly."
-                cat "$GITHUB_WORKSPACE/appium.log"
-                exit 1
-              fi
-
-              if [ "$i" -eq 30 ]; then
-                echo "Appium did not become ready."
-                cat "$GITHUB_WORKSPACE/appium.log"
-                exit 1
-              fi
-
               sleep 2
-              i=$((i + 1))
             done
 
-            echo "=== Run Mobile TestNG Suite ==="
+            if [ "$APPIUM_READY" != "true" ]; then
+              cat "$GITHUB_WORKSPACE/appium.log"
+              echo "Appium did not become ready."
+              exit 1
+            fi
+
+            echo "=== Run Android Mobile TestNG Suite ==="
             cd "$GITHUB_WORKSPACE/mobile-api-automation"
             mvn -B -ntp -Dsurefire.suiteXmlFiles=testng-mobile.xml test
 
