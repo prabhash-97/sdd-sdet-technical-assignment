@@ -1,4 +1,4 @@
-name: SDD SDET Automation CI
+name: SDD Web and API Automation CI
 
 on:
   push:
