@@ -8,7 +8,6 @@ permissions:
 
 jobs:
   android-mobile-automation:
-    if: false
     name: Appium Android Mobile Tests
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -68,9 +67,7 @@ jobs:
                 exit 1
               fi
 
-              if curl --silent --fail \
-                http://127.0.0.1:4723/status \
-                > /tmp/appium-status.json; then
+              if curl --proto-default http --silent --fail 127.0.0.1:4723/status > /tmp/appium-status.json; then
                 APPIUM_READY=1
                 break
               fi
