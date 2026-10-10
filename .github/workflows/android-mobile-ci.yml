@@ -1,19 +1,34 @@
+
 name: SDD Android Mobile Automation CI
 
 on:
+  push:
+    branches:
+      - main
+      - master
+      - test/appium-ci-fix
+  pull_request:
+    branches:
+      - main
+      - master
+      - test/appium-ci-fix
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: android-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  android-mobile-automation:
-    name: Appium Android Mobile Tests
+  android-mobile-tests:
+    name: Android Mobile Appium Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 35
 
     steps:
-      - name: Checkout source code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -28,19 +43,14 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
       - name: Install Appium and UiAutomator2
         run: |
-          npm install --global appium@3.8.0
+          npm install --global appium
           appium --version
           appium driver install uiautomator2
           appium driver list --installed
 
-      - name: Start emulator and run mobile tests
+      - name: Run Android Mobile Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -48,76 +58,76 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
+          emulator-options: >-
+            -no-window
+            -no-audio
+            -no-boot-anim
+            -camera-back none
+            -camera-front none
           script: |
-            set +e
+            set -eu
+
             echo "=== Android devices ==="
             adb devices
             adb wait-for-device
 
-            echo "=== Start Appium ==="
-            appium --address 127.0.0.1 --port 4723 \
-              > /tmp/appium.log 2>&1 &
-            APPIUM_PID=$!
+            echo "=== Wait for Android boot ==="
+            i=1
+            while [ "$i" -le 60 ]; do
+              BOOT_STATUS=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+              if [ "$BOOT_STATUS" = "1" ]; then
+                echo "Android emulator booted."
+                break
+              fi
+              if [ "$i" -eq 60 ]; then
+                echo "Android emulator failed to boot."
+                exit 1
+              fi
+              sleep 2
+              i=$((i + 1))
+            done
 
-            APPIUM_READY=0
-            for i in $(seq 1 60); do
+            echo "=== Start Appium ==="
+            appium --address 127.0.0.1 --port 4723 > "$GITHUB_WORKSPACE/appium.log" 2>&1 &
+            APPIUM_PID=$!
+            echo "$APPIUM_PID" > "$GITHUB_WORKSPACE/appium.pid"
+
+            echo "=== Wait for Appium readiness ==="
+            i=1
+            while [ "$i" -le 30 ]; do
+              if curl --silent --fail http://127.0.0.1:4723/status > /tmp/appium-status.json; then
+                echo "Appium is ready."
+                break
+              fi
+
               if ! kill -0 "$APPIUM_PID" 2>/dev/null; then
-                echo "Appium exited unexpectedly"
-                cat /tmp/appium.log
+                echo "Appium stopped unexpectedly."
+                cat "$GITHUB_WORKSPACE/appium.log"
                 exit 1
               fi
 
-              if curl --proto-default http --silent --fail 127.0.0.1:4723/status > /tmp/appium-status.json; then
-                APPIUM_READY=1
-                break
+              if [ "$i" -eq 30 ]; then
+                echo "Appium did not become ready."
+                cat "$GITHUB_WORKSPACE/appium.log"
+                exit 1
               fi
+
               sleep 2
+              i=$((i + 1))
             done
 
-            if [ "$APPIUM_READY" -ne 1 ]; then
-              echo "Appium did not become ready"
-              cat /tmp/appium.log
-              exit 1
-            fi
+            echo "=== Run Mobile TestNG Suite ==="
+            cd "$GITHUB_WORKSPACE/mobile-api-automation"
+            mvn -B -ntp -Dsurefire.suiteXmlFiles=testng-mobile.xml test
 
-            cat /tmp/appium-status.json
-
-            echo "=== Run mobile-only TestNG suite ==="
-            cd mobile-api-automation
-            mvn -B clean test \
-              -Dsurefire.suiteXmlFiles=testng-mobile.xml
-            TEST_EXIT=$?
-
-            cd ..
-            echo "=== Organize Allure evidence ==="
-            python3 scripts/organize_test_evidence.py
-            EVIDENCE_EXIT=$?
-
-            echo "=== Test exit code: $TEST_EXIT ==="
-            echo "=== Evidence organizer exit code: $EVIDENCE_EXIT ==="
-
-            if [ "$TEST_EXIT" -ne 0 ]; then
-              exit "$TEST_EXIT"
-            fi
-            exit "$EVIDENCE_EXIT"
-
-      - name: Show Appium logs on failure
-        if: failure()
-        run: |
-          if [ -f /tmp/appium.log ]; then
-            cat /tmp/appium.log
-          else
-            echo "Appium log file was not created."
-          fi
-
-      - name: Upload mobile test evidence
+      - name: Upload Mobile Test Results and Appium Logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: android-mobile-test-evidence
+          name: android-mobile-test-results
           if-no-files-found: warn
           path: |
+            appium.log
             mobile-api-automation/target/surefire-reports/
-            mobile-api-automation/target/allure-results/
-            mobile-api-automation/target/test-evidence/
-            mobile-api-automation/target/logs/
+            mobile-api-automation/target/failsafe-reports/
+            mobile-api-automation/target/screenshots/
