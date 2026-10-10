@@ -1,0 +1,109 @@
+name: SDD Android Mobile Automation CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android-mobile-tests:
+    name: Android Mobile Appium Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Appium and UiAutomator2
+        run: |
+          npm install --global appium
+          appium --version
+          appium driver install uiautomator2
+          appium driver list --installed
+
+      - name: Run Android Mobile Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-options: >-
+            -no-window
+            -no-audio
+            -no-boot-anim
+            -camera-back none
+            -camera-front none
+          
+          script: |
+            set -eu
+
+            echo "=== Android devices ==="
+            adb devices
+            adb wait-for-device
+
+            echo "=== Wait for Android boot ==="
+            adb -s emulator-5554 wait-for-device
+
+            BOOTED=false
+            for i in $(seq 1 90); do
+              BOOT_STATUS=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)
+              if [ "$BOOT_STATUS" = "1" ]; then
+                BOOTED=true
+                break
+              fi
+              sleep 2
+            done
+
+            if [ "$BOOTED" != "true" ]; then
+              echo "Android emulator did not boot."
+              exit 1
+            fi
+
+            echo "=== Start Appium ==="
+            appium --address 127.0.0.1 --port 4723 > "$GITHUB_WORKSPACE/appium.log" 2>&1 &
+            echo $! > "$GITHUB_WORKSPACE/appium.pid"
+
+            echo "=== Wait for Appium ==="
+            APPIUM_READY=false
+            for i in $(seq 1 30); do
+              if curl --silent --fail http://127.0.0.1:4723/status > /tmp/appium-status.json; then
+                APPIUM_READY=true
+                break
+              fi
+              sleep 2
+            done
+
+            if [ "$APPIUM_READY" != "true" ]; then
+              cat "$GITHUB_WORKSPACE/appium.log"
+              echo "Appium did not become ready."
+              exit 1
+            fi
+
+            echo "=== Run Android Mobile TestNG Suite ==="
+            cd "$GITHUB_WORKSPACE/mobile-api-automation"
+            mvn -B -ntp -Dsurefire.suiteXmlFiles=testng-mobile.xml test
+
+      - name: Upload Mobile Test Results and Appium Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-mobile-test-results
+          if-no-files-found: warn
+          path: |
+            appium.log
+            mobile-api-automation/target/surefire-reports/
+            mobile-api-automation/target/failsafe-reports/
+            mobile-api-automation/target/screenshots/

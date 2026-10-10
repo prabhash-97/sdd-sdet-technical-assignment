@@ -7,11 +7,13 @@
         <listener class-name="com.sdd.automation.listeners.AllureTestListener"/>
     </listeners>
 
+    <!-- Android mobile tests disabled for CI
     <test name="Mobile Tests">
         <packages>
             <package name="com.sdd.automation.tests.mobile"/>
         </packages>
     </test>
+    -->
 
     <test name="API Tests">
         <packages>

@@ -6,10 +6,7 @@ import com.sdd.automation.pages.mobile.HomePage;
 import io.appium.java_client.AppiumDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.annotations.Listeners;
-import com.sdd.automation.listeners.AllureTestListener;
 
-@Listeners(AllureTestListener.class)
 public class HomeScreenTest extends BaseMobileTest {
 
     @Test

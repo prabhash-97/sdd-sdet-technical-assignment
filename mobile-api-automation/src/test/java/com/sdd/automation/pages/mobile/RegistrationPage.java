@@ -6,9 +6,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-//import io.appium.java_client.AppiumBy; 
-//import org.openqa.selenium.TimeoutException;
-
 import java.time.Duration;
 
 public class RegistrationPage {
@@ -17,7 +14,7 @@ public class RegistrationPage {
     private final WebDriverWait wait;
 
     private final By usernameField =
-        By.id("io.selendroid.testapp:id/userName");
+        By.id("io.selendroid.testapp:id/inputUsername");
 
     private final By nameField =
         By.id("io.selendroid.testapp:id/inputName");
@@ -30,9 +27,6 @@ public class RegistrationPage {
 
     private final By languageSpinner =
         By.id("io.selendroid.testapp:id/input_preferedProgrammingLanguage");
-
-    private final By termsCheckbox =
-        By.id("io.selendroid.testapp:id/input_adds");
 
     private final By registerButton =
         By.id("io.selendroid.testapp:id/btnRegisterUser");

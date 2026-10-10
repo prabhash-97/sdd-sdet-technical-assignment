@@ -20,10 +20,6 @@ public class ChromeWebViewPage {
 
     private final By nameField = By.id("name_input");
 
-    private final By carOption = By.xpath(
-        "//*[@text='Volvo' or @text='Mercedes']"
-    );
-
     private final By submitButton = By.xpath(
         "//*[@text='Send me your name!']"
     );
@@ -68,8 +64,6 @@ public class ChromeWebViewPage {
             ExpectedConditions.visibilityOfElementLocated(introduction)
         ).getText();
     }
-
-
 
     public void selectCar(String car) {
         By carControl = By.xpath(

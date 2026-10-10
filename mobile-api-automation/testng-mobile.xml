@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="SDD Android Mobile Suite" parallel="none">
+    <listeners>
+        <listener class-name="com.sdd.automation.listeners.AllureTestListener"/>
+    </listeners>
+    <test name="Mobile UI Tests">
+        <packages>
+            <package name="com.sdd.automation.tests.mobile"/>
+        </packages>
+    </test>
+</suite>

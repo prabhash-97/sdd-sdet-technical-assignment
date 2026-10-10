@@ -10,10 +10,7 @@ import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.testng.annotations.Listeners;
-import com.sdd.automation.listeners.AllureTestListener;
 
-@Listeners(AllureTestListener.class)
 public class ChromeWebViewTest extends BaseMobileTest {
 
     @Test
@@ -49,15 +46,12 @@ public class ChromeWebViewTest extends BaseMobileTest {
         String confirmation = webViewPage.getConfirmationText();
 
         System.out.println("===== CONFIRMATION SCREEN =====");
-        System.out.println(confirmation);
-        System.out.println("===== END CONFIRMATION =====");
 
         Assert.assertTrue(
             confirmation.contains("KTest"),
             "Confirmation should contain the entered name."
         );
         System.out.println("===== CAR SELECTOR PAGE SOURCE =====");
-        System.out.println(driver.getPageSource());
 
         Assert.assertTrue(
             confirmation.toLowerCase().contains("mercedes"),

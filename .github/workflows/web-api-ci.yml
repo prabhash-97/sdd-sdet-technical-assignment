@@ -1,21 +1,19 @@
-
-name: SDD SDET Automation CI
+name: SDD Web and API Automation CI
 
 on:
   push:
     branches:
-      - main
-      - master
+      - '**'
   pull_request:
     branches:
-      - main
-      - master
+      - '**'
   workflow_dispatch:
 
 jobs:
   web-automation:
     name: Web Playwright Automation
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -29,14 +27,28 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: web-automation
-        run: >
-          mvn exec:java
-          -Dexec.mainClass=com.microsoft.playwright.CLI
-          -Dexec.args="install --with-deps chromium"
+        run: mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install chromium"
 
       - name: Run Web Playwright tests
         working-directory: web-automation
         run: mvn clean test
+
+      - name: Set up Node.js for Allure
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate Web Allure HTML report
+        if: always()
+        working-directory: web-automation
+        run: |
+          if find target/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
+            npm install --global allure-commandline
+            allure generate target/allure-results --clean --output target/allure-report
+          else
+            echo "No Allure results found; skipping report generation."
+          fi
 
       - name: Upload Web test reports
         if: always()
@@ -47,13 +59,13 @@ jobs:
           path: |
             web-automation/target/surefire-reports/
             web-automation/target/allure-results/
+            web-automation/target/allure-report/
             web-automation/target/logs/
             web-automation/target/screenshots/
 
-  api-and-mobile-automation:
-    name: API and Android Mobile Automation
+  api-automation:
+    name: API REST Assured + Cucumber
     runs-on: ubuntu-latest
-    timeout-minutes: 45
 
     steps:
       - name: Checkout source code
@@ -66,65 +78,37 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Set up Node.js
+      - name: Run API automation tests
+        working-directory: mobile-api-automation
+        run: mvn clean test -Dsurefire.suiteXmlFiles=testng-api.xml
+
+      - name: Set up Node.js for Allure
+        if: always()
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Install Appium
+      - name: Generate API Allure HTML report
+        if: always()
+        working-directory: mobile-api-automation
         run: |
-          npm install --global appium@3.8.0
-          appium --version
-          appium driver install uiautomator2
-          appium driver list --installed
-
-      - name: Start Android emulator and run tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: default
-          arch: x86_64
-          profile: pixel_2
-          disable-animations: true
-          script: |
-            adb devices
-            adb wait-for-device
-
-            appium --address 127.0.0.1 --port 4723 > /tmp/appium.log 2>&1 &
-
-            for i in $(seq 1 30); do
-              if curl --silent --fail http://127.0.0.1:4723/status > /dev/null; then
-                echo "Appium server is ready"
-                break
-              fi
-              sleep 2
-            done
-
-            if ! curl --silent --fail http://127.0.0.1:4723/status; then
-              echo "Appium failed to start"
-              cat /tmp/appium.log
-              exit 1
-            fi
-
-            mvn -B clean test
-
-      - name: Show Appium logs on failure
-        if: failure()
-        run: |
-          if [ -f /tmp/appium.log ]; then
-            cat /tmp/appium.log
+          if find target/allure-results -name '*-result.json' -print -quit 2>/dev/null | grep -q .; then
+            npm install --global allure-commandline
+            allure generate target/allure-results --clean --output target/allure-report
+          else
+            echo "No Allure results found; skipping report generation."
           fi
 
-      - name: Upload API and mobile test reports
+      - name: Upload API test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: api-mobile-test-reports
+          name: api-test-reports
           if-no-files-found: warn
           path: |
             mobile-api-automation/target/surefire-reports/
             mobile-api-automation/target/allure-results/
+            mobile-api-automation/target/allure-report/
             mobile-api-automation/target/cucumber-report.html
             mobile-api-automation/target/cucumber-report.json
             mobile-api-automation/target/logs/
-            mobile-api-automation/target/screenshots/

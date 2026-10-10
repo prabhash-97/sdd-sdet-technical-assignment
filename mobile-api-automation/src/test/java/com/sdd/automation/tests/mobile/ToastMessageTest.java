@@ -12,10 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
-import org.testng.annotations.Listeners;
-import com.sdd.automation.listeners.AllureTestListener;
 
-@Listeners(AllureTestListener.class)
 public class ToastMessageTest extends BaseMobileTest {
 
     @Test
@@ -35,8 +32,6 @@ public class ToastMessageTest extends BaseMobileTest {
             driver, Duration.ofSeconds(10)
         );
 
-        // Android toast messages are usually exposed briefly through
-        // the accessibility hierarchy using this text attribute.
         WebElement toast = wait.until(
             ExpectedConditions.visibilityOfElementLocated(
                 By.xpath(
