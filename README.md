@@ -74,7 +74,7 @@ sdd-sdet-technical-assignment/
 └── .gitignore
 ```
 
-The structure above highlights the main project components. The `test-evidence/` folders should contain the actual screenshots and supporting evidence captured during execution.
+The structure above highlights the main project components. 
 
 ## Framework Design
 
@@ -153,7 +153,6 @@ mvn clean test -Dsurefire.suiteXmlFiles=testng-api.xml
 | Errors | 0 |
 | Skipped | 0 |
 
-The reported count reflects the recorded local execution. Check the generated report for the exact scenarios executed by the selected suite.
 
 ## Mobile Automation
 
@@ -220,24 +219,13 @@ Detailed test evidence is maintained separately from this README to keep the mai
 test-evidence/
 ├── web/
 │   ├── web-test-execution.png
-│   ├── web-allure-overview.png
-│   └── web-allure-test-details.png
 ├── api/
 │   ├── api-test-execution.png
-│   ├── api-allure-overview.png
-│   └── api-response-validation.png
 ├── mobile/
 │   ├── mobile-test-execution.png
-│   ├── mobile-allure-overview.png
-│   ├── mobile-allure-failures.png
-│   └── mobile-app-execution.png
 └── manual/
     ├── test-cases.xlsx
-    ├── test-execution-summary.png
-    └── defect-evidence/
 ```
-
-These are suggested filenames. Add the actual evidence files and adjust the filenames to match them.
 
 ### Reporting tools
 
@@ -267,9 +255,9 @@ Allure reports and screenshots should be captured after running the tests. Local
 
 GitHub Actions workflows are maintained in `.github/workflows/`.
 
-### Main workflow: `ci.yml`
+### Main workflow: `web-api-ci.yml`
 
-The main workflow handles Web and API automation.
+This workflow handles Web and API automation.
 
 Configured capabilities include:
 
@@ -279,16 +267,14 @@ Configured capabilities include:
 - Web and API test execution.
 - Allure report generation and artifact publication where configured.
 
-### Android workflow: `sdet-tests.yml`
+### Android workflow: `android-mobile-ci.yml`
 
 The separate Android workflow is retained for the mobile automation pipeline.
 
 Current configuration:
 
 - Manual triggering through `workflow_dispatch`.
-- The Android job has `if: false` and is therefore skipped.
-
-The Android workflow does not currently execute its test job until that condition is changed. A skipped job must not be described as a successful Android test run.
+- Currently have emulator issue with CI pipeline
 
 ## Manual Testing
 
@@ -303,8 +289,8 @@ The manual-testing deliverable should include:
 - Actual results.
 - Pass/fail status.
 - Defect references and supporting evidence where applicable.
-
-Submit the completed Excel workbook separately if required by the assignment. Supporting screenshots and defect evidence can be organized under `test-evidence/manual/`.
+  
+  Folder path : manual-testing
 
 ## Execution Instructions
 
@@ -354,7 +340,7 @@ The following table summarizes the latest local execution results recorded durin
 
 The Web and API results show successful recorded local executions. The Mobile suite includes two intended unhandled-exception scenarios whose assertions failed, giving a reported pass rate of 80%.
 
-These results reflect the recorded local runs and do not guarantee the status of the latest GitHub Actions run. Consult the corresponding reports for execution details.
+These results reflect the recorded local runs and do not guarantee the status of the latest GitHub Actions run. 
 
 ## Deliverables
 
