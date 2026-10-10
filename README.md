@@ -1,25 +1,51 @@
-# SDD SDET Technical Assignment
+# SDD Senior SDET Technical Assignment
 
-A modular automation framework developed for the **Sharjah Digital Department (SDD) Senior Software Development Engineer in Test technical evaluation**.
+A multi-layer test automation solution covering **Web UI, REST API, and Android Mobile testing**, supported by manual test documentation, automated reporting, and CI/CD integration.
 
-The solution covers web UI automation, REST API testing, Android mobile automation, BDD, test reporting, logging, failure diagnostics, CI/CD, and manual testing deliverables.
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Framework Design](#framework-design)
+- [Web Automation](#web-automation)
+- [API Automation](#api-automation)
+- [Mobile Automation](#mobile-automation)
+- [Reporting and Test Evidence](#reporting-and-test-evidence)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Manual Testing](#manual-testing)
+- [Execution Instructions](#execution-instructions)
+- [Test Results](#test-results)
+- [Deliverables](#deliverables)
+
+## Project Overview
+
+This repository demonstrates a maintainable test automation approach across three testing layers:
+
+- **Web UI automation** using Playwright and Java.
+- **REST API automation** using REST Assured, TestNG, and Cucumber.
+- **Android mobile automation** using Appium, UiAutomator2, and TestNG.
+- Manual test cases and execution documentation.
+- Allure reporting, execution logs, and test evidence.
+- GitHub Actions workflows for automated test execution.
+
+The solution emphasizes reusable components, clear test reporting, maintainability, and traceable execution evidence.
 
 ## Technology Stack
 
-| Area | Technology |
+| Area | Technologies |
 |---|---|
-| Programming Language | Java 17 |
-| Web UI Automation | Playwright |
-| API Automation | REST Assured |
-| Mobile Automation | Appium |
-| Test Framework | TestNG |
+| Programming language | Java 17 |
+| Build management | Maven |
+| Web automation | Playwright |
+| API automation | REST Assured |
+| Test framework | TestNG |
 | BDD | Cucumber |
-| Build Tool | Maven |
-| Reporting | Allure, Cucumber HTML/JSON, Maven Surefire |
-| Logging | Log4j2 |
+| Mobile automation | Appium, UiAutomator2 |
+| Reporting | Allure Report, Cucumber HTML, Maven Surefire |
 | CI/CD | GitHub Actions |
-| Version Control | Git / GitHub |
-| Design Pattern | Page Object Model (POM) |
+| Version control | Git, GitHub |
+| Mobile execution | Android Emulator |
 
 ## Project Structure
 
@@ -27,255 +53,324 @@ The solution covers web UI automation, REST API testing, Android mobile automati
 sdd-sdet-technical-assignment/
 ├── .github/
 │   └── workflows/
+│       ├── ci.yml
+│       └── sdet-tests.yml
 ├── web-automation/
-│   ├── pom.xml
-│   ├── testng.xml
-│   └── src/
-│       ├── main/java/com/sdd/automation/
-│       └── test/java/com/sdd/automation/
-├── mobile-api-automation/
-│   ├── pom.xml
-│   ├── testng.xml
-│   ├── testng-mobile.xml
 │   ├── src/
-│   │   ├── main/java/com/sdd/automation/
-│   │   └── test/
-│   │       ├── java/com/sdd/automation/
-│   │       └── resources/
-│   └── apps/
-│       └── selendroid-test-app.apk
-├── manual-testing/
-└── README.md
+│   ├── pom.xml
+│   └── README.md
+├── mobile-api-automation/
+│   ├── src/
+│   ├── testng.xml
+│   ├── testng-api.xml
+│   ├── pom.xml
+│   └── README.md
+├── test-evidence/
+│   ├── web/
+│   ├── api/
+│   ├── mobile/
+│   └── manual/
+├── README.md
+└── .gitignore
 ```
 
-## Framework Architecture
+The structure above highlights the main project components. The `test-evidence/` folders should contain the actual screenshots and supporting evidence captured during execution.
 
-### Web UI Automation
+## Framework Design
 
-Playwright automates browser interactions using the Page Object Model.
+The automation solution follows these principles:
 
-The framework separates page objects, test scenarios, browser lifecycle management, reusable utilities, and TestNG listeners. Failure diagnostics can include screenshots, execution summaries, and stack traces.
+- **Separation of concerns:** test logic is separated from page interactions and supporting utilities where applicable.
+- **Reusability:** shared setup, configuration, and utilities reduce duplication.
+- **Readable tests:** descriptive test names and scenarios communicate expected behavior.
+- **Maintainability:** organized test classes and configuration simplify updates.
+- **Traceability:** reports, logs, and screenshots support execution review and troubleshooting.
+- **CI/CD integration:** GitHub Actions supports repeatable Web and API test execution.
 
-### API Automation
+## Web Automation
 
-REST Assured supports API validation, including HTTP status codes, response fields, API chaining, test data generation, and JSON schema validation.
+**Technologies:** Java, Playwright, TestNG, Maven, Allure.
 
-### Android Mobile Automation
+The Web automation module validates UI behavior and interactions through automated browser tests.
 
-Appium automates the supplied Selendroid Android test application. Driver management and common test setup and teardown are separated from individual test cases.
+### Test coverage
 
-### BDD Automation
+The implemented scenarios include:
 
-Cucumber feature files describe behavior in a readable format, while step definitions implement the corresponding test actions and assertions.
+- Drag-and-drop interactions.
+- Selectable items.
+- Go Green interaction.
+- Resizable box behavior.
+- Control group interactions.
+- jQuery UI home page validation.
+- Additional scenarios implemented in the web test suite.
 
-## Design Patterns and Framework Practices
-
-### Page Object Model
-
-Web page interactions are encapsulated in page classes to keep locators and UI actions separate from test scenarios and assertions.
-
-### Manager Pattern
-
-Centralized managers handle shared resources such as Playwright and Appium drivers. This keeps initialization and cleanup consistent across tests.
-
-### Utility Classes
-
-Reusable utilities support common framework tasks, including screenshots, test data generation, logging, and execution diagnostics.
-
-### Constants and Configuration
-
-Shared endpoint names, configuration values, and other reusable constants are centralized where appropriate to reduce duplication and improve maintainability.
-
-## Automation Coverage
-
-### Web UI Automation
-
-The web suite covers eight jQuery UI interactions and smoke tests:
-
-- Droppable
-- Selectable
-- Controlgroup
-- Datepicker
-- Resizable
-- Sortable
-- Widget Factory
-- Home page smoke test
-
-### API Automation
-
-The REST Assured framework supports API smoke checks, GET and create-user scenarios, API chaining, response validation, and JSON schema validation where configured.
-
-### BDD Automation
-
-Cucumber feature files are stored under `mobile-api-automation/src/test/resources/features/`. The TestNG Cucumber runner and step definitions provide the execution layer. The configured runner generates separate HTML and JSON reports.
-
-## Reporting and Diagnostics
-
-The framework uses multiple reporting mechanisms to support test analysis and debugging.
-
-| Report | Purpose |
-|---|---|
-| Allure dashboard | Test status, duration, execution details, and configured attachments |
-| Screenshots | Visual evidence of UI failures when captured and attached |
-| Stack traces | Exception details and failure locations |
-| Execution summaries | Test name, status, duration, and other configured metadata |
-| Application/framework logs | Diagnostic messages produced by Log4j2 |
-| API request/response attachments | HTTP diagnostics when configured in API tests |
-| Cucumber HTML/JSON | BDD scenario execution results |
-| Maven Surefire reports | TestNG results, counts, and failure information |
-
-### Allure Report Structure
-
-Each Maven module has its own reporting output.
-
-```text
-web-automation/target/
-├── allure-results/
-├── allure-report/
-├── surefire-reports/
-├── screenshots/
-└── logs/
-
-mobile-api-automation/target/
-├── allure-results/
-├── allure-report/
-├── surefire-reports/
-├── cucumber-report.html
-├── cucumber-report.json
-└── logs/
-```
-
-Actual files and directories depend on the suite executed and the reporting configuration.
-
-**Allure results** are the raw files generated during test execution. The **Allure dashboard** is generated from those results.
-
-When configured, individual Allure test details can include:
-- Pass/fail status and execution duration.
-- Execution summary attachments.
-- Failure messages and stack traces.
-- Screenshot attachments for UI failures.
-- Log and API diagnostic attachments.
-
-Screenshots and logs are not automatically attached merely because they exist on disk. The appropriate listener or test code must attach them to the relevant Allure test result.
-
-### Generate the Allure Dashboard
-
-Run these commands from the relevant module directory after executing tests:
-
-```bash
-allure generate target/allure-results \
-  --output target/allure-report \
-  --clean
-
-allure open target/allure-report
-```
-
-The Allure CLI must be installed and available on `PATH`.
-
-### Additional Reports
-
-- **Surefire:** `target/surefire-reports/`
-- **Cucumber HTML:** `target/cucumber-report.html`
-- **Cucumber JSON:** `target/cucumber-report.json`
-
-Cucumber scenarios appear in Allure only when the appropriate Cucumber Allure adapter is installed and configured.
-
-## Running the Tests
-
-### Prerequisites
-
-- JDK 17.
-- Maven.
-- Playwright browser installation.
-- Android SDK and an emulator or physical device for mobile tests.
-- Appium server and the required Android driver.
-- Allure CLI for generating the dashboard.
-
-### Web Automation
+### Execute Web tests
 
 ```bash
 cd web-automation
-mvn test
+mvn clean test
 ```
 
-### API and BDD Automation
+### Latest recorded local result
+
+| Metric | Result |
+|---|---:|
+| Total tests | 8 |
+| Passed | 8 |
+| Failed | 0 |
+| Errors | 0 |
+| Skipped | 0 |
+
+## API Automation
+
+**Technologies:** Java, REST Assured, TestNG, Cucumber, Maven, Allure.
+
+The API automation module validates HTTP responses, endpoint behavior, and response data.
+
+### Test coverage
+
+- GET request execution and HTTP status validation.
+- User endpoint validation, including page-based user data.
+- Response data and field assertions.
+- Cucumber feature scenarios and step definitions.
+- Dedicated TestNG suite execution for API tests.
+
+### Execute API tests
 
 ```bash
 cd mobile-api-automation
-mvn test
+mvn clean test -Dsurefire.suiteXmlFiles=testng-api.xml
 ```
 
-The configured `testng.xml` may also include mobile tests. Use the appropriate suite configuration if you need to execute only API/BDD tests.
+### Latest recorded local result
 
-### Mobile Automation
+| Metric | Result |
+|---|---:|
+| Total tests | 6 |
+| Passed | 6 |
+| Failed | 0 |
+| Errors | 0 |
+| Skipped | 0 |
 
-Start the Android emulator or connect a device, start Appium, and verify device connectivity before running the configured mobile suite.
+The reported count reflects the recorded local execution. Check the generated report for the exact scenarios executed by the selected suite.
 
-```bash
-cd mobile-api-automation
-mvn test -Dsurefire.suiteXmlFiles=testng-mobile.xml
+## Mobile Automation
+
+**Technologies:** Java, Appium, UiAutomator2, TestNG, Maven, Allure.
+
+The Mobile automation module validates Android application launch, UI interactions, navigation, and application behavior under normal and exception scenarios.
+
+### Automated test scenarios
+
+| Test class | Scenario |
+|---|---|
+| `AppiumSmokeTest` | `verifyApplicationLaunches` — verifies successful application launch |
+| `ChromeWebViewTest` | Validates Chrome WebView interactions |
+| `HomeScreenTest` | Validates home screen behavior |
+| `LanguageSelectionTest` | Validates language selection |
+| `PopupWindowTest` | Validates popup window handling |
+| `ProgressBarTest` | Validates progress bar behavior |
+| `ToastMessageTest` | Validates toast message behavior |
+| `UnhandledExceptionButtonTest` | `verifyHomeScreenAfterUnhandledExceptionButton` — exercises the unhandled-exception button and verifies the home screen title |
+| `UnhandledExceptionInputTest` | `verifyHomeScreenAfterTypingExceptionInput` — exercises exception-triggering input and verifies the resulting application behavior |
+
+### Intentional failure scenario
+
+The assignment specifies the following failure scenario:
+
+1. Launch the application.
+2. Tap **Press to throw unhandled exception**.
+3. Verify the home screen title.
+
+This scenario deliberately exercises the application's behavior after an unhandled exception. If the application does not return to the expected home screen state, the title assertion fails.
+
+The resulting test failure is retained as evidence of the observed behavior. It should not automatically be treated as a defect in the automation framework.
+
+**Reporting distinction:** the scenario is intentionally designed to exercise an exception, but a failed assertion remains a failed test in TestNG and Allure. The expected scenario outcome and the actual test result should be documented separately.
+
+### Mobile execution results
+
+The reported mobile execution contains 10 test cases, with 8 passing and 2 failing.
+
+| Metric | Result |
+|---|---:|
+| Total tests | 10 |
+| Passed | 8 |
+| Failed | 2 |
+| Skipped | 0 |
+| Pass rate | 80% |
+
+The two failures are associated with the intended unhandled-exception scenarios as specified for this assignment.
+
+### Mobile prerequisites
+
+- Android SDK and a compatible Android emulator or device.
+- Appium server.
+- Required Appium driver, such as UiAutomator2.
+- Correct device capabilities and application configuration.
+
+## Reporting and Test Evidence
+
+Detailed test evidence is maintained separately from this README to keep the main documentation concise.
+
+### Evidence directory
+
+```text
+test-evidence/
+├── web/
+│   ├── web-test-execution.png
+│   ├── web-allure-overview.png
+│   └── web-allure-test-details.png
+├── api/
+│   ├── api-test-execution.png
+│   ├── api-allure-overview.png
+│   └── api-response-validation.png
+├── mobile/
+│   ├── mobile-test-execution.png
+│   ├── mobile-allure-overview.png
+│   ├── mobile-allure-failures.png
+│   └── mobile-app-execution.png
+└── manual/
+    ├── test-cases.xlsx
+    ├── test-execution-summary.png
+    └── defect-evidence/
 ```
 
-## CI/CD
+These are suggested filenames. Add the actual evidence files and adjust the filenames to match them.
 
-GitHub Actions automates web and API test execution and publishes test reports as workflow artifacts.
+### Reporting tools
 
-### Workflow execution
+- **Allure Report:** suite summaries, individual test results, execution durations, and failure details.
+- **Maven Surefire:** TestNG execution summaries.
+- **Cucumber HTML report:** readable BDD scenario results.
+- **Appium logs:** device interactions and mobile driver diagnostics.
+- **Screenshots and video:** visual evidence of execution and failures.
 
-The main workflow is defined in `.github/workflows/ci.yml`. It runs the web and API automation jobs independently when changes are pushed to, or pull requests target, the configured `main` and `master` branches. It can also be started manually when configured in GitHub Actions.
+### Local report locations
 
-### Web automation pipeline
+Typical generated report paths include:
 
-1. Check out the repository.
-2. Set up Java 17 and the required build environment.
-3. Install the Playwright browser dependencies.
-4. Execute the web automation suite using Maven.
-5. Generate the Allure HTML report from the available Allure result files.
-6. Upload the web test results and generated reports as the `web-test-reports` workflow artifact.
+```text
+web-automation/target/allure-report/index.html
+mobile-api-automation/target/allure-report/index.html
+mobile-api-automation/target/cucumber-report.html
+```
 
-### API automation pipeline
+The actual paths depend on the reporting configuration and execution commands.
 
-1. Check out the repository.
-2. Set up Java 17 and the Maven environment.
-3. Execute the API-only TestNG suite using `testng-api.xml`, keeping API execution separate from Android UI tests.
-4. Generate the Allure HTML report when Allure result files are available.
-5. Upload the API Allure results and HTML report as the `api-test-reports` workflow artifact.
+To view a local HTML report, open the generated `index.html` or report file in a browser.
 
-The API suite also produces a Cucumber HTML report locally as part of test execution.
+Allure reports and screenshots should be captured after running the tests. Local links such as `127.0.0.1` are not accessible to reviewers outside your computer, so include screenshots in the repository and publish CI report artifacts where configured.
 
-### Reports and artifacts
+## CI/CD Pipeline
 
-- **Allure HTML reports:** Provide a browsable summary of test execution and individual test results.
-- **Allure result files:** Preserve machine-readable test results used to generate the HTML reports.
-- **Surefire reports:** Provide Maven test execution summaries.
-- **Cucumber HTML report:** Provides a readable report of API feature and scenario execution.
+GitHub Actions workflows are maintained in `.github/workflows/`.
 
-Report-generation steps run with an `always()` condition so reports can still be generated when earlier test steps fail, provided result files are available. The workflow uploads available report files as artifacts for inspection from the corresponding GitHub Actions run.
+### Main workflow: `ci.yml`
 
-To review the reports, open the relevant workflow run in GitHub Actions and download the `web-test-reports` or `api-test-reports` artifact.
+The main workflow handles Web and API automation.
+
+Configured capabilities include:
+
+- Automatic execution on configured push and pull-request events.
+- Manual execution through `workflow_dispatch`.
+- Java setup and dependency installation.
+- Web and API test execution.
+- Allure report generation and artifact publication where configured.
+
+### Android workflow: `sdet-tests.yml`
+
+The separate Android workflow is retained for the mobile automation pipeline.
+
+Current configuration:
+
+- Manual triggering through `workflow_dispatch`.
+- The Android job has `if: false` and is therefore skipped.
+
+The Android workflow does not currently execute its test job until that condition is changed. A skipped job must not be described as a successful Android test run.
 
 ## Manual Testing
 
-The `manual-testing/` directory contains the manual testing deliverables prepared for the evaluation.
+Manual test documentation is maintained separately from the automated test source code.
 
-## Maintainability
+The manual-testing deliverable should include:
 
-The framework emphasizes separation of concerns, reusable utilities, centralized configuration, meaningful assertions, explicit synchronization, consistent resource management, and actionable failure diagnostics.
+- Test case ID and title.
+- Preconditions and test data.
+- Execution steps.
+- Expected results.
+- Actual results.
+- Pass/fail status.
+- Defect references and supporting evidence where applicable.
 
-## Code Quality and Test Execution Strategy
+Submit the completed Excel workbook separately if required by the assignment. Supporting screenshots and defect evidence can be organized under `test-evidence/manual/`.
 
-The framework emphasizes separation of concerns, reusable components, centralized configuration, meaningful test names and assertions, explicit synchronization, consistent driver lifecycle management, and actionable failure diagnostics.
+## Execution Instructions
 
-The web, API/BDD, and Android mobile layers can be executed independently using their respective Maven modules and TestNG suite configurations. This supports targeted execution and helps keep browser, API, and emulator-specific setup separate.
+### Prerequisites
 
-## Assignment Deliverables
+- Java 17.
+- Maven.
+- Git.
+- Node.js if required by the configured Allure report-generation workflow.
+- Android SDK, a compatible emulator or device, and Appium for mobile execution.
 
-- Web UI automation.
-- REST API automation.
-- Android mobile automation.
-- Cucumber BDD scenarios.
-- TestNG-based test execution.
-- Allure and supplementary reports.
-- Logging and failure diagnostics.
-- GitHub Actions CI/CD configuration.
-- Manual testing deliverables.
+### Run Web tests
+
+```bash
+cd web-automation
+mvn clean test
+```
+
+### Run API tests
+
+```bash
+cd mobile-api-automation
+mvn clean test -Dsurefire.suiteXmlFiles=testng-api.xml
+```
+
+### Run the configured Mobile suite
+
+From the `mobile-api-automation` directory:
+
+```bash
+mvn clean test
+```
+
+Ensure that Appium is running and the required Android device or emulator is available. Confirm the selected TestNG suite and configuration before execution.
+
+The Android GitHub Actions job remains disabled until its job condition is updated.
+
+## Test Results
+
+The following table summarizes the latest local execution results recorded during development.
+
+| Test layer | Total | Passed | Failed | Skipped |
+|---|---:|---:|---:|---:|
+| Web automation | 8 | 8 | 0 | 0 |
+| API automation | 6 | 6 | 0 | 0 |
+| Mobile automation | 10 | 8 | 2 | 0 |
+
+The Web and API results show successful recorded local executions. The Mobile suite includes two intended unhandled-exception scenarios whose assertions failed, giving a reported pass rate of 80%.
+
+These results reflect the recorded local runs and do not guarantee the status of the latest GitHub Actions run. Consult the corresponding reports for execution details.
+
+## Deliverables
+
+- Web UI automation framework and source code.
+- REST API automation framework and source code.
+- Android mobile automation implementation.
+- GitHub Actions workflow configuration.
+- Manual test cases and execution documentation.
+- Allure and other test reports.
+- Screenshots and supporting test evidence.
+
+## Notes
+
+- Do not commit credentials, access tokens, passwords, or sensitive test data.
+- Avoid committing generated build directories such as `target/`.
+- Keep screenshots and videos relevant, clearly named, and reasonably sized.
+- Use genuine execution evidence rather than illustrative images.
+- Preserve the two intentional mobile failure results accurately in the reports.
+- Update the results table whenever a new verified execution changes the recorded results.

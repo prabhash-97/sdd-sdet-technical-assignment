@@ -40,7 +40,7 @@ public class UserRegistrationTest extends BaseMobileTest {
         );
 
         // Fill in the registration fields.
-        //registrationPage.enterUsername("KTest@com");
+        registrationPage.enterUsername("KTest@com");
         registrationPage.enterName("KTest");
         registrationPage.enterEmail("sdd.test@example.com");
         registrationPage.enterPassword("Passw0rd123!");

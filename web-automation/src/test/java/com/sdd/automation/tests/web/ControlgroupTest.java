@@ -22,7 +22,12 @@ public class ControlgroupTest extends BaseWebTest {
                 controlgroupPage.isControlgroupDisplayed(),
                 "Controlgroup was not displayed"
         );
-
+        
         controlgroupPage.clickBookNow();
+
+        Assert.assertTrue(
+            page.url().contains("jqueryui.com/controlgroup"),
+            "User navigated away from the Controlgroup demo"
+        );
     }
 }

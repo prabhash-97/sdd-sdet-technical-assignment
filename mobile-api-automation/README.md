@@ -1,146 +1,183 @@
-# Mobile and API Automation
+# Mobile and API Automation Framework
 
-Java Maven automation framework for REST API, Cucumber BDD, and Android mobile testing.
+## Overview
+
+This module contains Android Mobile UI automation and REST API automation using Java, Maven, TestNG, Appium, REST Assured, Cucumber, and Allure reporting.
 
 ## Technology Stack
 
 - Java 17
-- Appium for Android automation
-- REST Assured for API testing
-- TestNG for test execution
-- Cucumber for BDD
-- Maven for dependency and build management
-- Allure for reporting
-- Log4j2 for logging
-
-## Framework Components
-
-### API Automation
-
-The API framework supports:
-
-- HTTP status code validation.
-- Response field assertions.
-- API chaining.
-- Test data generation.
-- JSON schema validation.
-- Reusable API configuration and endpoint constants.
-
-### BDD Automation
-
-Cucumber feature files are located under:
-
-```text
-src/test/resources/features/
-```
-
-Step definitions and the TestNG Cucumber runner are maintained separately.
-
-### Mobile Automation
-
-Appium automates the supplied Selendroid Android application. A dedicated driver manager and base test class manage driver setup, common initialization, and cleanup.
+- Maven
+- TestNG
+- Appium and UiAutomator2
+- REST Assured
+- Cucumber
+- Allure Report
+- Android SDK and Android Emulator
 
 ## Prerequisites
 
-- JDK 17
-- Maven
-- Android SDK and ADB
-- Android emulator or physical device
-- Appium server
-- Required Appium Android driver
-- Allure CLI for local report generation
+### For API tests
 
-Verify Android connectivity:
+- Java 17
+- Maven
+- Internet access if the tests call public API endpoints
+
+Verify Java and Maven:
+
+```bash
+java -version
+mvn -version
+```
+
+### For Mobile tests
+
+Install and configure:
+
+- Android SDK
+- Android Emulator or compatible Android device
+- Appium
+- UiAutomator2 Appium driver
+
+Verify Appium:
+
+```bash
+appium --version
+appium driver list --installed
+```
+
+Verify the connected emulator or device:
 
 ```bash
 adb devices
 ```
 
-Ensure the Appium server is running before executing mobile tests.
+Start the Appium server in a separate terminal before running mobile tests.
 
-## Execute Tests
+## Run API Tests
 
-### Configured TestNG Suite
-
-```bash
-mvn test
-```
-
-The default Maven Surefire configuration uses `testng.xml`. Check this file to confirm which mobile, API, and Cucumber tests are included.
-
-### Mobile-Only Suite
+Navigate to the module:
 
 ```bash
-mvn test -Dsurefire.suiteXmlFiles=testng-mobile.xml
+cd mobile-api-automation
 ```
 
-Use this command when the mobile-specific suite is configured in `testng-mobile.xml`.
-
-## Reporting
-
-### Allure Dashboard
-
-After executing the selected suite:
+Run the dedicated API TestNG suite:
 
 ```bash
-allure generate target/allure-results \
-  --output target/allure-report \
-  --clean
-
-allure open target/allure-report
+mvn clean test -Dsurefire.suiteXmlFiles=testng-api.xml
 ```
 
-### Mobile Failure Attachments
+This command runs the API suite configured in `testng-api.xml`.
 
-When implemented by the Allure listener, mobile failures can include:
+## API Test Coverage
 
-- Execution summary.
-- Failure message and stack trace.
-- Screenshot captured from the Android device.
-- Additional diagnostic information.
+The API automation suite includes:
 
-The screenshot should be attached to the failed test result, not merely saved to a separate directory.
+- HTTP GET request validation.
+- Response status-code verification.
+- User endpoint and page-based data validation.
+- Response field assertions.
+- Cucumber feature scenarios and step definitions.
 
-### API Diagnostics
+## Run Mobile Tests
 
-API test reporting can include:
+Ensure that the Android emulator or device is running and that Appium is available.
 
-- HTTP method and endpoint.
-- Request headers and body, where appropriate.
-- Response status code.
-- Response body.
-- Assertion failure details.
-- Stack trace and execution summary.
+From the `mobile-api-automation` directory, execute:
 
-Request and response information must be attached by the API test code or a dedicated reporting filter. Avoid including passwords, access tokens, or other secrets in report attachments.
+```bash
+mvn clean test
+```
 
-### Cucumber Reports
+This runs the suite configured by the project's Maven and TestNG configuration. Check `testng.xml` to confirm which test classes are included.
 
-The configured Cucumber runner generates:
+## Mobile Test Coverage
+
+The implemented mobile test classes include:
+
+- `AppiumSmokeTest`
+- `ChromeWebViewTest`
+- `HomeScreenTest`
+- `LanguageSelectionTest`
+- `PopupWindowTest`
+- `ProgressBarTest`
+- `ToastMessageTest`
+- `UnhandledExceptionButtonTest`
+- `UnhandledExceptionInputTest`
+
+The unhandled-exception scenarios exercise the application's behavior after an exception-triggering interaction and verify the resulting home screen behavior.
+
+## Latest Recorded Test Results
+
+### API
+
+| Metric | Count |
+|---|---:|
+| Total tests | 6 |
+| Passed | 6 |
+| Failed | 0 |
+| Errors | 0 |
+| Skipped | 0 |
+
+### Mobile
+
+| Metric | Count |
+|---|---:|
+| Total tests | 10 |
+| Passed | 8 |
+| Failed | 2 |
+| Skipped | 0 |
+| Pass rate | 80% |
+
+The two mobile failures relate to the assignment's unhandled-exception scenarios. They remain reported as failures when the relevant assertions fail.
+
+These counts reflect the recorded local executions. Consult the latest reports for current results.
+
+## Test Reports
+
+Typical report locations:
 
 ```text
+target/allure-results/
+target/allure-report/
+target/surefire-reports/
 target/cucumber-report.html
-target/cucumber-report.json
 ```
 
-These are separate from Allure. To include individual Cucumber scenarios in Allure, the Cucumber Allure adapter must be added as a dependency and configured as a Cucumber plugin.
+Open the generated Allure report in a browser:
 
-### Report Locations
+```text
+target/allure-report/index.html
+```
 
-| Output | Location |
-|---|---|
-| Allure raw results | `target/allure-results/` |
-| Generated Allure dashboard | `target/allure-report/` |
-| Surefire reports | `target/surefire-reports/` |
-| Cucumber HTML | `target/cucumber-report.html` |
-| Cucumber JSON | `target/cucumber-report.json` |
-| Logs | `target/logs/`, if configured |
+If the Allure CLI is installed, you can also serve the results directly:
+
+```bash
+allure serve target/allure-results
+```
+
+The Cucumber HTML report can be opened in a browser if it was generated by the configured test run.
 
 ## Troubleshooting
 
-- **No mobile device detected:** Check `adb devices` and emulator status.
-- **Appium connection failure:** Confirm the Appium server URL and required driver installation.
-- **Missing screenshots:** Verify the listener captures screenshots before the driver is closed and attaches them to Allure.
-- **Missing API tests in Allure:** Confirm the full suite ran and that the tests are included in the configured TestNG suite.
-- **Missing Cucumber scenarios in Allure:** Verify the Allure Cucumber adapter and plugin configuration.
-- **Empty Allure report:** Check that `target/allure-results/` contains result JSON files and attachments.
+### API tests
+
+- Check endpoint availability and network connectivity.
+- Review response status codes and assertion failures.
+- Inspect Maven Surefire and Cucumber reports.
+
+### Mobile tests
+
+- Ensure the emulator is running.
+- Verify `adb devices` lists the intended device.
+- Confirm Appium is running and UiAutomator2 is installed.
+- Check application package and activity configuration.
+- Review Appium logs, screenshots, and Allure failure details.
+
+## Notes
+
+- Mobile tests require a compatible Android environment.
+- API tests can be run independently using `testng-api.xml`.
+- Test results depend on the selected suite and execution environment.
+- Generated reports are created only when the corresponding reporting configuration runs.

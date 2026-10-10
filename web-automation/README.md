@@ -1,92 +1,104 @@
-# Web UI Automation
+# Web Automation Framework
 
-Java-based web UI automation using Playwright, TestNG, Maven, and Allure.
+## Overview
+
+This module contains automated Web UI tests using Java, Playwright, TestNG, Maven, and Allure reporting.
 
 ## Technology Stack
 
 - Java 17
+- Maven
 - Playwright for Java
 - TestNG
-- Maven
-- Allure
-- Log4j2
-
-## Framework Design
-
-The framework follows the Page Object Model and separates browser lifecycle management, page interactions, test logic, reusable utilities, and reporting listeners.
-
-## Test Coverage
-
-The current web test suite covers the following jQuery UI interactions and smoke tests:
-
-1. Droppable
-2. Selectable
-3. Controlgroup
-4. Datepicker
-5. Resizable
-6. Sortable
-7. Widget Factory
-8. Home page smoke test
+- Allure Report
 
 ## Prerequisites
 
-- JDK 17
+Install the following:
+
+- Java 17
 - Maven
-- Playwright-compatible browser binaries
-- Allure CLI, if generating reports locally
+- Git
 
-## Install Browser Binaries
-
-```bash
-mvn exec:java \
-  -Dexec.mainClass=com.microsoft.playwright.CLI \
-  -Dexec.args="install chromium"
-```
-
-## Execute Tests
+Verify the installations:
 
 ```bash
-mvn test
+java -version
+mvn -version
 ```
 
-## Reporting
+## Run Web Tests
 
-### Allure Dashboard
-
-After test execution, generate and open the Allure report:
+Navigate to the Web automation module:
 
 ```bash
-allure generate target/allure-results \
-  --output target/allure-report \
-  --clean
-
-allure open target/allure-report
+cd web-automation
 ```
 
-### Failure Diagnostics
+Execute the test suite:
 
-Depending on the listener implementation, failed tests can include:
+```bash
+mvn clean test
+```
 
-- Test execution summary.
-- Exception details and stack trace.
-- Screenshot of the browser state at failure.
-- Additional diagnostic information attached by the framework.
+Maven compiles the project and executes the configured tests.
 
-Screenshots may also be saved to the configured screenshot directory. An on-disk screenshot appears in the Allure dashboard only if it is attached to the relevant test result.
+## Test Coverage
 
-### Other Report Locations
+The Web automation suite includes scenarios such as:
 
-| Output | Location |
-|---|---|
-| Raw Allure results | `target/allure-results/` |
-| Generated Allure HTML | `target/allure-report/` |
-| Surefire reports | `target/surefire-reports/` |
-| Screenshots | `target/screenshots/`, if configured |
-| Logs | `target/logs/`, if configured |
+- Drag-and-drop interactions
+- Selectable items
+- Go Green interaction
+- Resizable box behavior
+- Control group interactions
+- jQuery UI home page validation
+
+Refer to the test source files for the complete list of implemented scenarios.
+
+## Test Results
+
+Latest recorded local execution:
+
+| Metric | Count |
+|---|---:|
+| Total tests | 8 |
+| Passed | 8 |
+| Failed | 0 |
+| Errors | 0 |
+| Skipped | 0 |
+
+## Test Reporting
+
+The project uses Allure reporting and Maven Surefire test results.
+
+Typical output locations:
+
+```text
+target/allure-results/
+target/allure-report/
+target/surefire-reports/
+```
+
+If the Allure HTML report has been generated, open it in a browser:
+
+```text
+target/allure-report/index.html
+```
+
+To generate and open an Allure report using the Allure CLI, if installed:
+
+```bash
+allure serve target/allure-results
+```
 
 ## Troubleshooting
 
-- If browser launch fails, verify that Chromium is installed.
-- If tests time out, check the target application's availability and locator synchronization.
-- If screenshots are missing from Allure, verify the listener's screenshot capture and attachment logic.
-- If the report is empty, confirm that the test execution produced files under `target/allure-results/`
+- Confirm Java 17 and Maven are installed.
+- Check the Maven console output if tests fail.
+- Verify browser dependencies and Playwright configuration.
+- Review Surefire reports and Allure results for failure details.
+
+## Notes
+
+Test results represent the execution run in which they were captured. Check the latest test report for current results.
