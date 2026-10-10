@@ -1,25 +1,7 @@
-
 name: SDD Android Mobile Automation CI
 
 on:
-  push:
-    branches:
-      - main
-      - master
-      - test/appium-ci-fix
-  pull_request:
-    branches:
-      - main
-      - master
-      - test/appium-ci-fix
   workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: android-mobile-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   android-mobile-tests:
